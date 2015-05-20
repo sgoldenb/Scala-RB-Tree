@@ -1,4 +1,4 @@
-name := "BlackReadTree"
+name := "RedBlackTree"
 
 version := "1.0"
 
