@@ -15,7 +15,9 @@ Add a bunch of values
 val e = tree addValue(2) addValue(4) addValue(3)  addValue(1)
 
 println(e getValues) // gives the values in descending order
+
 println(e contains(4)) // true
+
 println(e contains(7)) // false
 
 Installation:
