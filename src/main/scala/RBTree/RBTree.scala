@@ -8,7 +8,7 @@ import scala.math.Ordering.Implicits._
  *
  * TODO deletion
  *
- * Created by sebastian goldenberg.
+ * @author sebastian goldenberg.
  */
 object RBTree {
 
@@ -20,6 +20,17 @@ object RBTree {
   case class R() extends Color
   case class B() extends Color
 
+  /**
+   * Inserts a value into a tree
+   * @param e
+   *          the value to insert
+   * @param tree
+   *             tree to insert into
+   * @tparam T
+   *           type of the value
+   * @return
+   *         a new tree with the value inserted
+   */
   final def insert[T: Ordering](e: T, tree: Tree[T]): Tree[T] = {
 
     def build(color: Color, left: Tree[T], e: T, right: Tree[T]): Tree[T] = {
@@ -32,7 +43,6 @@ object RBTree {
       }
     }
 
-    // TODO make tailrec
     def ins(tree: Tree[T]): Tree[T] = {
         tree match {
         case Node(col, l, a, r) =>
