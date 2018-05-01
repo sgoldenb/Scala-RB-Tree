@@ -4,15 +4,15 @@ import scala.annotation.tailrec
 import scala.math.Ordering.Implicits._
 
 /**
- * Functional red black tree implementation.
- *
- * TODO deletion
- *
- * @author sebastian goldenberg.
- */
+  * Functional red black tree implementation.
+  *
+  * TODO deletion
+  *
+  * @author sebastian goldenberg.
+  */
 object RBTree {
 
-  abstract class Tree[T: Ordering]()
+  abstract class Tree[T: Ordering]
   case class Node[T: Ordering](color: Color, left: Tree[T], a: T, right: Tree[T]) extends Tree[T]
   case class Empty[T: Ordering]() extends Tree[T]
 
@@ -21,16 +21,16 @@ object RBTree {
   case class B() extends Color
 
   /**
-   * Inserts a value into a tree
-   * @param e
-   *          the value to insert
-   * @param tree
-   *             tree to insert into
-   * @tparam T
-   *           type of the value
-   * @return
-   *         a new tree with the value inserted
-   */
+    * Inserts a value into a tree
+    * @param e
+    *          the value to insert
+    * @param tree
+    *             tree to insert into
+    * @tparam T
+    *           type of the value
+    * @return
+    *         a new tree with the value inserted
+    */
   final def insert[T: Ordering](e: T, tree: Tree[T]): Tree[T] = {
 
     def build(color: Color, left: Tree[T], e: T, right: Tree[T]): Tree[T] = {
@@ -40,21 +40,16 @@ object RBTree {
         case (B(), a, x, Node(R(), Node(R(), b, y, c), z, d)) => Node(R(), Node(B(), a, x, b), y, Node(B(), c, z, d))
         case (B(), a, x, Node(R(), b, y, Node(R(), c, z, d))) => Node(R(), Node(B(), a, x, b), y, Node(B(), c, z, d))
         case (c, l, x, r) => Node(c, l, x, r)
+        case _ => throw new NoSuchElementException
       }
     }
 
     def ins(tree: Tree[T]): Tree[T] = {
-        tree match {
+      tree match {
         case Node(col, l, a, r) =>
-          if (e < a) {
-            build(col, ins(l), a, r)
-          }
-          else if (e > a) {
-            build(col, l, a, ins(r))
-          }
-          else {
-            tree
-          }
+          if (e < a) build(col, ins(l), a, r)
+          else if (e > a) build(col, l, a, ins(r))
+          else tree
         case Empty() => Node(R(), Empty(), e, Empty())
       }
     }
@@ -79,13 +74,13 @@ object RBTree {
   }
 
   /**
-   * Returns the sorted list of the values in the given tree.
-   *
-   * @param tree
-   *          Tree to get values from.
-   * @return
-   *         List of values in descending order.
-   */
+    * Returns the sorted list of the values in the given tree.
+    *
+    * @param tree
+    *          Tree to get values from.
+    * @return
+    *         List of values in descending order.
+    */
   final def getSortedValues[T: Ordering](tree: Tree[T]): List[T] = {
 
     /*
@@ -94,33 +89,31 @@ object RBTree {
      */
     @tailrec
     def summed(tree: Tree[T], acc: List[T]): List[T] = {
-     tree match {
-       case Node(_, Empty(), v, Empty()) => summed(Empty(), v::acc)
-       case Node(_, Empty(), v, r) => summed(r,  v :: acc)
-       case Node(_, Node(_, Empty(), b ,Empty()), v, r) => summed(r,v:: b::acc)
-       case Node(_, Node(_, a, b, c), v, r) =>
-          // rebuild branch to a simpler problem
-          val reb = Node(R(), a, b, Node(R(), c, v, r))
-          summed(reb, acc)
-       case Empty() => acc
-     }
+      tree match {
+        case Node(_, Empty(), v, Empty()) => summed(Empty(), v::acc)
+        case Node(_, Empty(), v, r) => summed(r,  v :: acc)
+        case Node(_, Node(_, Empty(), b ,Empty()), v, r) => summed(r,v:: b::acc)
+        // rebuild branch to a simpler problem
+        case Node(_, Node(_, a, b, c), v, r) => summed(Node(R(), a, b, Node(R(), c, v, r)), acc)
+        case Empty() => acc
+      }
     }
     summed(tree, List[T]())
   }
 
   /**
-   * Constructor for an empty tree.
-   * @tparam T
-   *           The type of the tree.
-   * @return
-   *         An empty red black tree.
-   */
-  def getEmptyTree[T: Ordering] = Empty[T]()
+    * Constructor for an empty tree.
+    * @tparam T
+    *           The type of the tree.
+    * @return
+    *         An empty red black tree.
+    */
+  def getEmptyTree[T: Ordering]: Empty[T] = Empty[T]()
 
   implicit class utils[T: Ordering](val tree: Tree[T]) {
-    def addValue(v: T) = insert(v, tree)
-    def getValues = getSortedValues(tree)
-    def contains(v: T) = isMember(v, tree)
+
+    def addValue(v: T): Tree[T] = insert(v, tree)
+    def getValues: List[T] = getSortedValues(tree)
+    def contains(v: T): Boolean = isMember(v, tree)
   }
 }
-
